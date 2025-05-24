@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.routes import hello
+from app.routes import hello, users
 from app.database.database import Database
 
 
@@ -25,3 +25,4 @@ app.add_middleware(
 
 # Include routers
 app.include_router(hello.router)
+app.include_router(users.router)

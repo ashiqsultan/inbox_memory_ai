@@ -10,11 +10,12 @@ Make sure to run the migrations using the docker container.
 ```
 
 2. List the migrations using the following command:
-   This will list all the migrations in the /migrations directory.
-
 ```
+cd migrations
+
 yoyo list --database postgresql://postgres:postgres@postgres:5432/inbox_memory_db .
 ```
+This will list all the migrations in the /migrations directory.
 
 3. Apply the migrations using the following command: This will ask you to confirm before applying the migrations one by one. You need to answer with y or n for each migration.
 
