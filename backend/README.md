@@ -37,3 +37,10 @@ Example:
 0009_add_user_table.sql
 0009_add_user_table.rollback.sql
 ```
+## Setup ngrock for development
+docker run --rm -it --net=host \
+  -e NGROK_AUTHTOKEN=<secret> \
+  ngrok/ngrok:latest \
+  http 9000
+
+
