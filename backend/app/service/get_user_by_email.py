@@ -8,7 +8,7 @@ class UserNotFoundError(Exception):
     pass
 
 
-async def get_user_by_email_service(email: str) -> asyncpg.Record:
+async def get_user_by_email(email: str) -> asyncpg.Record:
     """
     Service function to get a user by their email address
     
