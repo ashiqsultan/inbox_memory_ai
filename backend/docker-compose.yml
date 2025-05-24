@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    ports:
+      - '9000:9000'
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inbox_memory_db
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    container_name: inbox_memory_fastapi
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=inbox_memory_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - inbox_memory_pg_vol:/var/lib/postgresql/data
+    restart: unless-stopped
+    container_name: inbox_memory_postgres
+
+volumes:
+  inbox_memory_pg_vol:

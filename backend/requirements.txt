@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic 
+asyncpg
+yoyo-migrations
+psycopg2-binary
+email_validator
+langchain-text-splitters
+lancedb
+pandas
+
+python-multipart
+
+PyMuPDF
+
+PyJWT
