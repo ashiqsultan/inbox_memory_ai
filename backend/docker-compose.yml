@@ -5,8 +5,11 @@ services:
     build: .
     ports:
       - '9000:9000'
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inbox_memory_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     volumes:
       - .:/app
     depends_on:
