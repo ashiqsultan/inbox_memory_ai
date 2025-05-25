@@ -32,14 +32,25 @@ async def handle_postmark_webhook(request: Request):
 
         html_body = json_data.get("HtmlBody", None)
 
-        # is_forwarded = TODO Need to use LLM to determine is forwarded
-
         user_data = await get_user_by_email(sender_email)
         user_id = user_data["id"]
 
         await create_email(
             user_id, email_subject, text_body, html_body, is_forwarded=False
         )
+
+        # TODO: Email Classification Using LLM
+        # 1. Is is a question email then we need to respond
+        # 2. Else we need to store them and process them for saving in embedding
+        # LLm will categorize the email and create a category and save them in DB like below
+        # May be we need to add a category column in DB
+        
+        # TODO: Create a FastAPI Backgroundjob that will do the following tasks
+        # 1. Chunk the Text ✂️
+        # 2. Create a vector embedding for each text chunk
+        # 3. Store the embedding in DB
+
+        # TODO: If Its a Question then do RAG operations 🤖
 
         return {"status": "success", "message": "Email received and processed"}
 
