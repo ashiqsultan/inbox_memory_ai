@@ -4,7 +4,7 @@ services:
   fastapi:
     build: .
     ports:
-      - '9000:9000'
+      - '8002:8002'
     env_file:
       - .env
     environment:

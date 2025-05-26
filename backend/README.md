@@ -13,7 +13,7 @@ docker logs -f <container name or id>
 docker run --rm -it --net=host \
   -e NGROK_AUTHTOKEN=<secret> \
   ngrok/ngrok:latest \
-  http 9000
+  http 8002
 ```
 
 ## Using yoyo-migrations CLI
