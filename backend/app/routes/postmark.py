@@ -1,16 +1,19 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, BackgroundTasks
 import json
 from app.service.email.create import create_email
 from app.service.get_user_by_email import get_user_by_email
 from app.ai.classify_email import classify_email, OutputFormat
 from typing import Any
 from app.helpers.remove_links import remove_links
+from app.background_jobs.email_processor import add_email_processing_task
 
 router: APIRouter = APIRouter()
 
 
 @router.post("/postmark")
-async def handle_postmark_webhook(request: Request) -> Any:
+async def handle_postmark_webhook(
+    request: Request, background_tasks: BackgroundTasks
+) -> Any:
     """Handle inbound email webhooks from Postmark"""
     try:
 
@@ -45,13 +48,14 @@ async def handle_postmark_webhook(request: Request) -> Any:
             await create_email(
                 user_id, email_subject, text_body, html_body, is_forwarded=False
             )
+
+            add_email_processing_task(
+                background_tasks, user_id, email_subject, text_body
+            )
+            print("Background task started for subject: ", email_subject)
             return {"message": "Okay"}
-            # TODO: Create a FastAPI Backgroundjob that will do the following tasks
-            # 1. Chunk the Text ✂️
-            # 2. Create a vector embedding for each text chunk
-            # 3. Store the embedding in DB
         elif classify_answer.action == "QA":
-            return {"message": "Your answer is foo bar test"}
+            return {"message": "Okay"}
 
         # TODO: Email Classification Using LLM
         # 1. Is is a question email then we need to respond
