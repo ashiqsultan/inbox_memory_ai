@@ -2,17 +2,19 @@ from fastapi import APIRouter, Request
 import json
 from app.service.email.create import create_email
 from app.service.get_user_by_email import get_user_by_email
+from app.ai.classify_email import classify_email, OutputFormat
+from typing import Literal, Any
 
 
-router = APIRouter()
+router: APIRouter = APIRouter()
 
 
 @router.post("/postmark")
-async def handle_postmark_webhook(request: Request):
+async def handle_postmark_webhook(request: Request) -> Any:
     """Handle inbound email webhooks from Postmark"""
     try:
 
-        json_data = await request.json()
+        json_data: Any = await request.json()
 
         print("=== Postmark Inbound Email Data ===")
         print(json.dumps(json_data, indent=2))
@@ -35,24 +37,27 @@ async def handle_postmark_webhook(request: Request):
         user_data = await get_user_by_email(sender_email)
         user_id = user_data["id"]
 
-        await create_email(
-            user_id, email_subject, text_body, html_body, is_forwarded=False
-        )
+        classify_answer: OutputFormat = await classify_email(text_body)
+
+        if classify_answer.action == "SAVE":
+            await create_email(
+                user_id, email_subject, text_body, html_body, is_forwarded=False
+            )
+            return {"message": "Okay"}
+            # TODO: Create a FastAPI Backgroundjob that will do the following tasks
+            # 1. Chunk the Text ✂️
+            # 2. Create a vector embedding for each text chunk
+            # 3. Store the embedding in DB
 
         # TODO: Email Classification Using LLM
         # 1. Is is a question email then we need to respond
         # 2. Else we need to store them and process them for saving in embedding
         # LLm will categorize the email and create a category and save them in DB like below
         # May be we need to add a category column in DB
-        
-        # TODO: Create a FastAPI Backgroundjob that will do the following tasks
-        # 1. Chunk the Text ✂️
-        # 2. Create a vector embedding for each text chunk
-        # 3. Store the embedding in DB
 
         # TODO: If Its a Question then do RAG operations 🤖
 
-        return {"status": "success", "message": "Email received and processed"}
+        return {"message": "Okay"}
 
     except Exception as e:
         print(f"Error processing Postmark webhook")
