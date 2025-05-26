@@ -3,8 +3,8 @@ import json
 from app.service.email.create import create_email
 from app.service.get_user_by_email import get_user_by_email
 from app.ai.classify_email import classify_email, OutputFormat
-from typing import Literal, Any
-
+from typing import Any
+from app.helpers.remove_links import remove_links
 
 router: APIRouter = APIRouter()
 
@@ -37,7 +37,9 @@ async def handle_postmark_webhook(request: Request) -> Any:
         user_data = await get_user_by_email(sender_email)
         user_id = user_data["id"]
 
-        classify_answer: OutputFormat = await classify_email(text_body)
+        text_body_without_links = remove_links(text_body)
+
+        classify_answer: OutputFormat = await classify_email(text_body_without_links)
 
         if classify_answer.action == "SAVE":
             await create_email(
@@ -48,6 +50,8 @@ async def handle_postmark_webhook(request: Request) -> Any:
             # 1. Chunk the Text ✂️
             # 2. Create a vector embedding for each text chunk
             # 3. Store the embedding in DB
+        elif classify_answer.action == "QA":
+            return {"message": "Your answer is foo bar test"}
 
         # TODO: Email Classification Using LLM
         # 1. Is is a question email then we need to respond
