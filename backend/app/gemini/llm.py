@@ -4,7 +4,9 @@ from typing import Optional
 import os
 
 
-async def llm(prompt: str, config: types.GenerateContentConfig) -> str:
+async def llm(
+    prompt: str, config: types.GenerateContentConfig
+) -> types.GenerateContentResponse:
     """
     Generate content using the Gemini model.
     Args:
@@ -23,4 +25,4 @@ async def llm(prompt: str, config: types.GenerateContentConfig) -> str:
         model=MODEL, config=config, contents=prompt
     )
 
-    return response.text
+    return response

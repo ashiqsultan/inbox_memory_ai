@@ -1,19 +1,20 @@
 from app.gemini.llm import llm
 from google.genai import types
 from pydantic import BaseModel
+from enum import Enum
 import json
-from typing import Literal
+from typing import Literal, Any
 
 
 class OutputFormat(BaseModel):
-    action: str
+    action: Literal["QA", "SAVE"]
 
 
-async def classify_email(email_text: str) -> Literal["QA", "SAVE"]:
+async def classify_email(email_text: str) -> OutputFormat:
     """
     Uses Gemini llm model to determine actions
     Returns:
-        Literal["QA", "SAVE"]: Either "QA" if the email contains a question, or "SAVE" if it's informational
+        OutputFormat
     """
     system_instruction = """You are a classification model for an email processing application.
     You will be provided with Email Subject and Email text as input. 
@@ -31,11 +32,16 @@ async def classify_email(email_text: str) -> Literal["QA", "SAVE"]:
         response_mime_type="application/json",
         response_schema=OutputFormat,
     )
-    response: str = await llm(email_text, config)
-    json_response: dict = json.loads(response)
-    action: str = json_response["action"]
-    if action == "QA" or action == "SAVE":
-        return action
+
+    response: types.GenerateContentResponse = await llm(email_text, config)
+    # Reference: https://ai.google.dev/gemini-api/docs/structured-output
+    if response.parsed:
+        parsed_res: BaseModel | Enum | dict[Any, Any] = response.parsed
+        if isinstance(parsed_res, OutputFormat):
+            action: str = parsed_res.action
+            if action == "QA" or action == "SAVE":
+                return parsed_res
+
     raise Exception("Error in classify_email llm response")
 
 
@@ -44,10 +50,10 @@ import asyncio
 
 async def main() -> None:
     try:
-        test_email = "What is the deadline for submitting the project?"
-        result: str = await classify_email(test_email)
+        test_email = "Make sure to participate in dev , to hackathon"
+        result: OutputFormat = await classify_email(test_email)
         print(f"Test email: {test_email}")
-        print(f"Classification result: {result}")
+        print(f"Classification result: {result.action}")
     except Exception as e:
         print("Oops !")
         print(e)
