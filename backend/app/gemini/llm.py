@@ -4,11 +4,7 @@ from typing import Optional
 import os
 
 
-async def llm(
-    prompt: str,
-    system_instruction: Optional[str] = None,
-    model: str = "gemini-2.0-flash",
-) -> str:
+async def llm(prompt: str, config: types.GenerateContentConfig) -> str:
     """
     Generate content using the Gemini model.
     Args:
@@ -19,16 +15,12 @@ async def llm(
     Returns:
         The generated text response
     """
-    API_KEY = os.getenv("GEMINI_API_KEY", "")
-    client = genai.Client(api_key=API_KEY)
-    config = (
-        types.GenerateContentConfig(system_instruction=system_instruction)
-        if system_instruction
-        else None
-    )
-
-    response = await client.aio.models.generate_content(
-        model=model, config=config, contents=prompt
+    MODEL = "gemini-2.0-flash"
+    API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    client: genai.Client = genai.Client(api_key=API_KEY)
+    config = config
+    response: types.GenerateContentResponse = await client.aio.models.generate_content(
+        model=MODEL, config=config, contents=prompt
     )
 
     return response.text
