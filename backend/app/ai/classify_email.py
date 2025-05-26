@@ -1,10 +1,9 @@
 from app.gemini.llm import llm
 
-
 possible_actions = ["SAVE", "QA"]
 
 
-def classify_email(email_text: str):
+async def classify_email(email_text: str):
     """
     Uses Gemini llm model to determine actions
     """
@@ -19,13 +18,18 @@ def classify_email(email_text: str):
     For QA the JSON response should be {"action":"QA"}
     For SAVE the JSON response should be {"action":"SAVE"}
     """
-    response = llm(email_text, system_instruction=system_instruction)
+    response = await llm(email_text, system_instruction=system_instruction)
     return response
 
+import asyncio
+
+async def main():
+    test_email = "What is the deadline for submitting the project?"
+    result = await classify_email(test_email)
+    print(f"Test email: {test_email}")
+    print(f"Classification result: {result}")
 
 if __name__ == "__main__":
     # Test the classification
-    test_email = "What is the deadline for submitting the project?"
-    result = classify_email(test_email)
-    print(f"Test email: {test_email}")
-    print(f"Classification result: {result}")
+    asyncio.run(main())
+    

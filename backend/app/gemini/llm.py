@@ -4,7 +4,7 @@ from typing import Optional
 import os
 
 
-def llm(
+async def llm(
     prompt: str,
     system_instruction: Optional[str] = None,
     model: str = "gemini-2.0-flash",
@@ -27,10 +27,8 @@ def llm(
         else None
     )
 
-    response = client.models.generate_content(
+    response = await client.aio.models.generate_content(
         model=model, config=config, contents=prompt
     )
 
     return response.text
-
-
