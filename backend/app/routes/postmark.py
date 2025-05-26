@@ -45,12 +45,16 @@ async def handle_postmark_webhook(
         classify_answer: OutputFormat = await classify_email(text_body_without_links)
 
         if classify_answer.action == "SAVE":
-            await create_email(
+            email_ref_id = await create_email(
                 user_id, email_subject, text_body, html_body, is_forwarded=False
             )
 
             add_email_processing_task(
-                background_tasks, user_id, email_subject, text_body
+                background_tasks,
+                user_id,
+                email_ref_id,
+                str(email_subject),
+                str(text_body_without_links),
             )
             print("Background task started for subject: ", email_subject)
             return {"message": "Okay"}
