@@ -40,9 +40,11 @@ async def handle_postmark_webhook(
         user_data = await get_user_by_email(sender_email)
         user_id = user_data["id"]
 
-        text_body_without_links = remove_links(text_body)
+        text_body_without_links: str = remove_links(text_body)
 
-        classify_answer: OutputFormat = await classify_email(text_body_without_links)
+        text_first_500_chars: str = text_body_without_links[:500]
+
+        classify_answer: OutputFormat = await classify_email(text_first_500_chars)
 
         if classify_answer.action == "SAVE":
             email_ref_id = await create_email(

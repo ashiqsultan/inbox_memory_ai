@@ -43,7 +43,7 @@ async def process_email_background(
 def add_email_processing_task(
     background_tasks: BackgroundTasks,
     user_id: UUID,
-    email_ref_id: UUID,
+    email_ref_id: str,
     email_subject: str,
     text_body: str,
 ) -> None:
