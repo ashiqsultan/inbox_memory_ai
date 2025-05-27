@@ -4,6 +4,7 @@ from app.database.redis_connect import RedisConnection
 from app.helpers.send_otp_email import send_otp_email
 from app.helpers.jwt_helper import generate_jwt
 from app.service.create_user import create_user_service, UserAlreadyExistsError
+from app.service.get_user_by_email import get_user_by_email
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -83,7 +84,11 @@ async def verify_otp(otp_data: VerifyOTPRequest):
 
     if is_valid:
         # Generate JWT token for successful verification
-        jwt_token = generate_jwt(otp_data.email)
+        user = await get_user_by_email(otp_data.email)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        user_id = str(user["id"])
+        jwt_token = generate_jwt(otp_data.email, user_id)
 
         return {
             "message": "OTP verified successfully",

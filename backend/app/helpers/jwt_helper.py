@@ -9,19 +9,20 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  #  1 day
 
 
-def generate_jwt(email: str) -> str:
+def generate_jwt(email: str, user_id: str) -> str:
     """
     Generate a JWT token with email in the payload
 
     Args:
         email (str): User's email address
-
+        user_id (str): User's ID
     Returns:
         str: JWT token
     """
     # Create payload
     payload = {
         "email": email,
+        "user_id": user_id,
         "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
         "iat": datetime.utcnow(),
         "type": "access_token",
