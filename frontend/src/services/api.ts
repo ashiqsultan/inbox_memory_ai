@@ -64,3 +64,24 @@ export const authAPI = {
 
 // Export the axios instance for other custom API calls
 export default api;
+
+// Email API endpoints
+export const emailAPI = {
+  // Get list of emails for the authenticated user
+  getEmailList: async () => {
+    const response = await api.get('/kb/');
+    return response.data;
+  },
+
+  // Get specific email by ID
+  getEmailById: async (emailId: string) => {
+    const response = await api.get(`/kb/${emailId}`);
+    return response.data;
+  },
+
+  // Ask question about emails (QA)
+  askQuestion: async (question: string) => {
+    const response = await api.post('/kb/qa', { question });
+    return response.data;
+  },
+};
