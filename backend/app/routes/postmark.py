@@ -7,6 +7,7 @@ from typing import Any
 from app.helpers.remove_links import remove_links
 from app.background_jobs.email_processor import add_email_processing_task
 from app.ai.qa_agent import qa_agent, AnswerOutputFormat
+from app.service.get_kb import get_kb
 
 router: APIRouter = APIRouter()
 
@@ -63,7 +64,7 @@ async def handle_postmark_webhook(
             return {"message": "Okay"}
         elif classify_answer.action == "QA":
             question: str = text_body
-            knowledgebase: str = ""
+            knowledgebase: str = await get_kb(question, str(user_id))
             answer: AnswerOutputFormat = await qa_agent(text_body, knowledgebase)
             return {"message": "Okay"}
 
