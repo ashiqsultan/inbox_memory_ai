@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.routes import hello, postmark, auth
+from app.routes import hello, postmark, auth, kb
 from app.database.database import Database
 from app.database.redis_connect import Redis
 from app.config import settings
@@ -39,3 +39,4 @@ app.add_middleware(
 app.include_router(hello.router)
 app.include_router(postmark.router)
 app.include_router(auth.router)
+app.include_router(kb.router)
