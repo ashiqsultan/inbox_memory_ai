@@ -48,7 +48,7 @@ async def login(login_data: LoginRequest):
     print(f"Email: {login_data.email}")
 
     # Generate and store OTP
-    otp = await RedisConnection.generate_and_store_otp(signup_data.email)
+    otp = await RedisConnection.generate_and_store_otp(login_data.email)
 
     return {
         "message": "Login request received. OTP sent.",
