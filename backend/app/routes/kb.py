@@ -25,11 +25,21 @@ def validate_session_token(request: Request):
     Raises:
         HTTPException: 400 if token is missing or invalid
     """
-    # Get session_token from headers
-    session_token = request.headers.get("session_token")
+    # Get Authorization header
+    authorization = request.headers.get("Authorization")
+
+    if not authorization:
+        raise HTTPException(status_code=400, detail="Authorization header is required")
+
+    # Check if it starts with "Bearer "
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=400, detail="Authorization header must start with 'Bearer '")
+
+    # Extract the token (remove "Bearer " prefix)
+    session_token = authorization[7:]  # Remove "Bearer " (7 characters)
 
     if not session_token:
-        raise HTTPException(status_code=400, detail="session_token header is required")
+        raise HTTPException(status_code=400, detail="Token is required")
 
     # Verify JWT token
     payload = verify_jwt(session_token)
