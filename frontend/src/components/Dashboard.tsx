@@ -116,7 +116,7 @@ const Dashboard = () => {
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-rose-600 bg-clip-text text-transparent">Inbox Memory AI</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-rose-600 bg-clip-text text-transparent">InboxMemory AI</h1>
             <button
               onClick={handleLogout}
               className="bg-rose-800 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
