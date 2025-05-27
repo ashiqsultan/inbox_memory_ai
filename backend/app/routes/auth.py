@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr
 from app.database.redis_connect import RedisConnection
 from app.helpers.send_otp_email import send_otp_email
+from app.helpers.jwt_helper import generate_jwt
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -75,10 +76,14 @@ async def verify_otp(otp_data: VerifyOTPRequest):
     is_valid = await RedisConnection.verify_otp(otp_data.email, otp_data.otp)
 
     if is_valid:
+        # Generate JWT token for successful verification
+        jwt_token = generate_jwt(otp_data.email)
+
         return {
             "message": "OTP verified successfully",
             "email": otp_data.email,
             "verified": True,
+            "access_token": jwt_token,
         }
     else:
         return {
