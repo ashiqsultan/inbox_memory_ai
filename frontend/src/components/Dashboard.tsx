@@ -119,7 +119,7 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold text-gray-900">Inbox</h1>
             <button
               onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
+              className="bg-rose-800 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200"
             >
               Logout
             </button>
@@ -176,7 +176,7 @@ const Dashboard = () => {
             showAIAnswer ? 'w-1/2' : 'w-full'
           }`}>
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Your Emails</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Email KnowledgeBase 🧠</h2>
             </div>
             {loading ? (
               <div className="flex justify-center items-center py-12">
