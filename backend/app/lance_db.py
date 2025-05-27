@@ -10,15 +10,14 @@ class TextEmbeddingSchema(LanceModel):
     email_ref_id: str
     vector: Vector(768)
     text: str
-    chunk_sequence: int  # sequence of the text in the chunk
+    chunk_sequence: int
     created_at: datetime
 
 
 class VectorSearchResult(BaseModel):
-    id: str
     email_ref_id: str
     text: str
-    chunk_sequence: str  # sequence of the text in the chunk
+    chunk_sequence: int
     created_at: datetime
 
 
