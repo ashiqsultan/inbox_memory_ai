@@ -1,8 +1,15 @@
 from fastapi import APIRouter, Request, HTTPException
+from pydantic import BaseModel
 from app.helpers.jwt_helper import verify_jwt
 from app.database.database import Database
+from app.ai.qa_agent import qa_agent, AnswerOutputFormat
+from app.service.get_kb import get_kb
 
 router = APIRouter(prefix="/kb", tags=["kb"])
+
+
+class QuestionRequest(BaseModel):
+    question: str
 
 
 def validate_session_token(request: Request):
@@ -120,3 +127,29 @@ async def get_kb_by_id(request: Request, kb_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+
+@router.post("/qa")
+async def qa_kb(request: Request, question_request: QuestionRequest):
+    """
+    RAG based question answering
+    """
+    # Validate session token
+    payload = validate_session_token(request)
+
+    # Get user_id from JWT payload
+    user_id = payload.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="user_id not found in token")
+
+    try:
+        question: str = question_request.question
+        knowledgebase: str = await get_kb(question, str(user_id))
+        answer: AnswerOutputFormat = await qa_agent(question, knowledgebase)
+
+        return {
+            "answer": answer.answer,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"QA processing error: {str(e)}")
