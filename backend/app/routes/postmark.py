@@ -10,6 +10,8 @@ from app.ai.qa_agent import qa_agent, AnswerOutputFormat
 from app.service.get_kb import get_kb
 from app.helpers.sendemail import sendemail
 from app.helpers.generate_qa_email_html import generate_qa_email_html
+from app.helpers.send_welcome_email import send_welcome_email
+
 
 router: APIRouter = APIRouter()
 
@@ -42,6 +44,12 @@ async def handle_postmark_webhook(
         html_body = json_data.get("HtmlBody", None)
 
         user_data = await get_user_by_email(sender_email)
+
+        if not user_data:
+            print(f"New user detected: {sender_email}")
+            send_welcome_email(sender_email)
+            return {"message": "Welcome email sent to new user"}
+
         user_id = user_data["id"]
 
         text_body_without_links: str = remove_links(text_body)

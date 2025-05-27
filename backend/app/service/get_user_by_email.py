@@ -3,9 +3,6 @@ import asyncpg
 from app.database.database import Database
 
 
-class UserNotFoundError(Exception):
-    """Exception raised when user is not found"""
-    pass
 
 
 async def get_user_by_email(email: str) -> asyncpg.Record:
@@ -25,8 +22,5 @@ async def get_user_by_email(email: str) -> asyncpg.Record:
         "SELECT id, email, name, created_at, updated_at FROM users WHERE email = $1", 
         email
     )
-    
-    if not user:
-        raise UserNotFoundError(f"User with email {email} not found")
     
     return user 
