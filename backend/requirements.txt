@@ -8,6 +8,7 @@ email_validator
 langchain-text-splitters
 lancedb
 pandas
+requests
 
 python-multipart
 
