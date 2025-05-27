@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr
-from typing import Optional
 from app.database.redis_connect import RedisConnection
+from app.helpers.send_otp_email import send_otp_email
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -30,7 +30,10 @@ async def signup(signup_data: SignupRequest):
     print(f"Name: {signup_data.name}")
 
     # Generate and store OTP
-    otp = await RedisConnection.generate_and_store_otp(signup_data.email)
+    otp, is_new = await RedisConnection.generate_and_store_otp(signup_data.email)
+
+    if is_new:
+        send_otp_email(signup_data.email, otp)
 
     return {
         "message": "Signup request received. OTP sent.",
@@ -48,7 +51,10 @@ async def login(login_data: LoginRequest):
     print(f"Email: {login_data.email}")
 
     # Generate and store OTP
-    otp = await RedisConnection.generate_and_store_otp(login_data.email)
+    otp, is_new = await RedisConnection.generate_and_store_otp(login_data.email)
+
+    if is_new:
+        send_otp_email(login_data.email, otp)
 
     return {
         "message": "Login request received. OTP sent.",

@@ -47,7 +47,7 @@ class RedisConnection:
         return cls._instance
 
     @classmethod
-    async def generate_and_store_otp(cls, email: str) -> str:
+    async def generate_and_store_otp(cls, email: str) -> tuple[str, bool]:
         """
         Generate a 6-digit OTP and store it in Redis with 5-minute expiration.
 
@@ -66,8 +66,8 @@ class RedisConnection:
         existing_otp = await redis_instance.get(otp_key)
 
         if existing_otp:
-            # OTP already exists, return it
-            return existing_otp
+            # OTP already exists, return it with False (not new)
+            return existing_otp, False
 
         # Generate new 6-digit OTP
         otp = "".join(random.choices(string.digits, k=6))
@@ -75,7 +75,7 @@ class RedisConnection:
         # Store OTP in Redis with 5-minute (300 seconds) expiration
         await redis_instance.setex(otp_key, 300, otp)
 
-        return otp
+        return otp, True
 
     @classmethod
     async def verify_otp(cls, email: str, provided_otp: str) -> bool:
