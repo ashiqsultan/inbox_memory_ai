@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 from app.database.redis_connect import RedisConnection
 from app.helpers.send_otp_email import send_otp_email
 from app.helpers.jwt_helper import generate_jwt
+from app.service.create_user import create_user_service, UserAlreadyExistsError
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -29,6 +30,11 @@ async def signup(signup_data: SignupRequest):
     print("Signup request received:")
     print(f"Email: {signup_data.email}")
     print(f"Name: {signup_data.name}")
+
+    try:
+        await create_user_service(signup_data.email, signup_data.name)
+    except UserAlreadyExistsError:
+        raise HTTPException(status_code=400, detail="User already exists")
 
     # Generate and store OTP
     otp, is_new = await RedisConnection.generate_and_store_otp(signup_data.email)
@@ -58,7 +64,7 @@ async def login(login_data: LoginRequest):
         send_otp_email(login_data.email, otp)
 
     return {
-        "message": "Login request received. OTP sent.",
+        "message": "Login request received. OTP sent to your email",
         "email": login_data.email,
     }
 

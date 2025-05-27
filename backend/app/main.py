@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from app.routes import hello, users, postmark, auth
+from app.routes import hello, postmark, auth
 from app.database.database import Database
 from app.database.redis_connect import Redis
 from app.config import settings
@@ -25,7 +25,7 @@ app = FastAPI(
     lifespan=lifespan,
     docs_url="/docs" if settings.is_development else None,
     redoc_url="/redoc" if settings.is_development else None,
-    openapi_url="/openapi.json" if settings.is_development else None
+    openapi_url="/openapi.json" if settings.is_development else None,
 )
 
 
@@ -37,6 +37,5 @@ app.add_middleware(
 
 # Include routers
 app.include_router(hello.router)
-app.include_router(users.router)
 app.include_router(postmark.router)
 app.include_router(auth.router)
