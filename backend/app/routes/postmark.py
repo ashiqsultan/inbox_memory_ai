@@ -6,6 +6,7 @@ from app.ai.classify_email import classify_email, OutputFormat
 from typing import Any
 from app.helpers.remove_links import remove_links
 from app.background_jobs.email_processor import add_email_processing_task
+from app.ai.qa_agent import qa_agent, AnswerOutputFormat
 
 router: APIRouter = APIRouter()
 
@@ -61,15 +62,10 @@ async def handle_postmark_webhook(
             print("Background task started for subject: ", email_subject)
             return {"message": "Okay"}
         elif classify_answer.action == "QA":
+            question: str = text_body
+            knowledgebase: str = ""
+            answer: AnswerOutputFormat = await qa_agent(text_body, knowledgebase)
             return {"message": "Okay"}
-
-        # TODO: Email Classification Using LLM
-        # 1. Is is a question email then we need to respond
-        # 2. Else we need to store them and process them for saving in embedding
-        # LLm will categorize the email and create a category and save them in DB like below
-        # May be we need to add a category column in DB
-
-        # TODO: If Its a Question then do RAG operations 🤖
 
         return {"message": "Okay"}
 

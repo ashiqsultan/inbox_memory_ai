@@ -16,7 +16,7 @@ async def classify_email(email_text: str) -> OutputFormat:
     Returns:
         OutputFormat
     """
-    system_instruction = """You are a classification model for an email processing application.
+    system_instruction = f"""You are a classification model for an email processing application.
     You will be provided with Email Subject and Email text as input. 
     Your only purpose is to understand the email subject and content and classify the action.
     There are two possible actions "SAVE" and "QA"
