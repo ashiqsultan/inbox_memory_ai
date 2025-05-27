@@ -7,10 +7,16 @@ from typing import Any
 from app.helpers.remove_links import remove_links
 from app.background_jobs.email_processor import add_email_processing_task
 from app.ai.qa_agent import qa_agent, AnswerOutputFormat
+from app.ai.extract_username_agent import (
+    extract_username_agent,
+    OutputFormatExtractName,
+)
 from app.service.get_kb import get_kb
 from app.helpers.sendemail import sendemail
 from app.helpers.generate_qa_email_html import generate_qa_email_html
 from app.helpers.send_welcome_email import send_welcome_email
+
+from app.service.create_user import create_user_service
 
 
 router: APIRouter = APIRouter()
@@ -47,7 +53,16 @@ async def handle_postmark_webhook(
 
         if not user_data:
             print(f"New user detected: {sender_email}")
-            send_welcome_email(sender_email)
+            text_body_without_links: str = remove_links(text_body)
+            text_first_500_chars: str = text_body_without_links[:500]
+            extracted_name: OutputFormatExtractName = await extract_username_agent(
+                text_first_500_chars
+            )
+            username: str = (
+                extracted_name.username if extracted_name.username else sender_email
+            )
+            create_user_service(sender_email, username)
+            send_welcome_email(sender_email, username)
             return {"message": "Welcome email sent to new user"}
 
         user_id = user_data["id"]

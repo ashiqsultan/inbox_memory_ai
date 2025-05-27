@@ -1,7 +1,7 @@
 from app.helpers.sendemail import sendemail
 
 
-def send_welcome_email(user_email: str) -> None:
+def send_welcome_email(user_email: str, username: str) -> None:
     """
     Sends a welcome email to new users with instructions on how to use Inbox Memory AI.
 
@@ -10,10 +10,10 @@ def send_welcome_email(user_email: str) -> None:
     """
     subject = "Welcome to Inbox Memory AI! 🎉"
 
-    welcome_html = """
+    welcome_html: str = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #2c3e50;">Welcome to Inbox Memory AI! 🎉</h1>
-        
+        <p>Hi, {username}</p>
         <p>Thank you for signing up! We're excited to help you build and interact with your personal knowledge base.</p>
         
         <h2 style="color: #34495e;">How Inbox Memory Works</h2>
