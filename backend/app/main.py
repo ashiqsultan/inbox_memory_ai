@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.routes import hello, users, postmark
 from app.database.database import Database
+from app.database.redis_connect import Redis
 from app.config import settings
 
 
@@ -11,9 +12,12 @@ async def lifespan(app: FastAPI):
     print(f"Starting FastAPI in {settings.environment.upper()} mode")
     print("Connecting to database...")
     await Database.connect()
+    print("Connecting to Redis...")
+    await Redis.connect()
     yield
     await Database.disconnect()
-    print("Disconnected from database")
+    await Redis.disconnect()
+    print("Disconnected from database and Redis")
 
 
 # Initialize FastAPI app

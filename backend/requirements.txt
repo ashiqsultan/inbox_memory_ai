@@ -17,3 +17,4 @@ PyMuPDF
 PyJWT
 
 google-genai
+redis

@@ -15,6 +15,7 @@ services:
       - .:/app
     depends_on:
       - postgres
+      - redis
     restart: unless-stopped
     container_name: inbox_memory_fastapi
 
@@ -30,6 +31,13 @@ services:
       - inbox_memory_pg_vol:/var/lib/postgresql/data
     restart: unless-stopped
     container_name: inbox_memory_postgres
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+    container_name: inbox_memory_redis
 
 volumes:
   inbox_memory_pg_vol:
