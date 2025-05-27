@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, BackgroundTasks
+from fastapi import APIRouter, Request, BackgroundTasks, HTTPException
 import json
 from app.service.email.create import create_email
 from app.service.get_user_by_email import get_user_by_email
@@ -68,7 +68,7 @@ async def handle_postmark_webhook(
             answer: AnswerOutputFormat = await qa_agent(text_body, knowledgebase)
             return {"message": "Okay"}
 
-        return {"message": "Okay"}
+        raise HTTPException(status_code=500, detail="Something went wrong")
 
     except Exception as e:
         print(f"Error processing Postmark webhook")
