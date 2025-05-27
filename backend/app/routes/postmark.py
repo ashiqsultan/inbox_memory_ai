@@ -8,6 +8,8 @@ from app.helpers.remove_links import remove_links
 from app.background_jobs.email_processor import add_email_processing_task
 from app.ai.qa_agent import qa_agent, AnswerOutputFormat
 from app.service.get_kb import get_kb
+from app.helpers.sendemail import sendemail
+from app.helpers.generate_qa_email_html import generate_qa_email_html
 
 router: APIRouter = APIRouter()
 
@@ -66,6 +68,10 @@ async def handle_postmark_webhook(
             question: str = text_body
             knowledgebase: str = await get_kb(question, str(user_id))
             answer: AnswerOutputFormat = await qa_agent(text_body, knowledgebase)
+            answer_html: str = generate_qa_email_html(question, answer)
+            truncated_question = question[:50] + ("..." if len(question) > 50 else "")
+            answer_email_subject: str = f"Inbox Memory AI Answer: {truncated_question}"
+            sendemail(sender_email, answer_email_subject, answer_html)
             return {"message": "Okay"}
 
         raise HTTPException(status_code=500, detail="Something went wrong")
