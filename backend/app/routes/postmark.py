@@ -61,7 +61,7 @@ async def handle_postmark_webhook(
             username: str = (
                 extracted_name.username if extracted_name.username else sender_email
             )
-            create_user_service(sender_email, username)
+            await create_user_service(sender_email, username)
             send_welcome_email(sender_email, username)
             return {"message": "Welcome email sent to new user"}
 
