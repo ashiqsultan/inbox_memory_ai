@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'http://localhost:8002',
+  baseURL: 'https://api.kbhelper.com',
   headers: {
     'Content-Type': 'application/json',
   },
