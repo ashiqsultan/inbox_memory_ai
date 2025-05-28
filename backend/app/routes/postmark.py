@@ -89,11 +89,17 @@ async def handle_postmark_webhook(
             return {"message": "Okay"}
         elif classify_answer.action == "QA":
             question: str = text_body
+            user_name: str = user_data["name"]
             knowledgebase: str = await get_kb(question, str(user_id))
-            answer: AnswerOutputFormat = await qa_agent(text_body, knowledgebase)
-            answer_html: str = generate_qa_email_html(question, answer)
+            extended_knowledgebase: str = (
+                f"{knowledgebase}\nremember user name is {user_name}"
+            )
+            answer: AnswerOutputFormat = await qa_agent(
+                text_body, extended_knowledgebase
+            )
+            answer_html: str = generate_qa_email_html(question, answer.answer)
             truncated_question = question[:50] + ("..." if len(question) > 50 else "")
-            answer_email_subject: str = f"Inbox Memory AI Answer: {truncated_question}"
+            answer_email_subject: str = f"InboxMemory AI Answer: {truncated_question}"
             sendemail(sender_email, answer_email_subject, answer_html)
             return {"message": "Okay"}
 

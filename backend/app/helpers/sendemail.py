@@ -23,7 +23,7 @@ def sendemail(
     Raises:
         Exception: If the API request fails
     """
-    from_email: str = "support@kbhelper.com"
+    from_email: str = "ai@kbhelper.com"
     message_stream: str = "outbound"
 
     headers: dict[str, str] = {
