@@ -11,6 +11,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/inbox_memory_db
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - ENVIRONMENT=${ENVIRONMENT}
+      - POSTMARK_SERVER_TOKEN=${POSTMARK_SERVER_TOKEN}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     volumes:
       - .:/app
     depends_on:
